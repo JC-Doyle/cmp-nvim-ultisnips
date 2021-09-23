@@ -19,7 +19,6 @@ function M.get_snippet_preview(user_data)
   local snippet = {}
   local count = 0
 
-  table.insert(snippet, '```' .. vim.bo.filetype)
   for i, line in pairs(content) do
     if i > linenr - 1 then
       local is_snippet_header = line:find('^snippet%s[^%s]') ~= nil
@@ -27,7 +26,11 @@ function M.get_snippet_preview(user_data)
       if line:find('^endsnippet') ~= nil or is_snippet_header and count ~= 1 then
         break
       end
-      if not is_snippet_header then
+      if is_snippet_header then
+        table.insert(snippet, '*' .. string.match(line,'"([^"]+)"') .. '*')
+        table.insert(snippet, '')
+        table.insert(snippet, '```' .. vim.bo.filetype)
+      else
         table.insert(snippet, line)
       end
     end
